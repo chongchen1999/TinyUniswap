@@ -2,25 +2,31 @@
 
 import { useEffect, useState } from "react";
 import { formatEther } from "viem";
-import { useAccount, useBalance } from "wagmi"; // Added useBalance
+import { useAccount, useBalance } from "wagmi";
 import Pool from "./_components/Pool";
 import { useDeployedContractInfo, useScaffoldReadContract } from "~~/hooks/scaffold-eth";
 
 const PoolsPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const { address: connectedAccount } = useAccount();
+    const IF_LOCAL = process.env.NEXT_PUBLIC_IF_LOCAL === "true";
     
-    // Added to fetch ETH balance
     const { data: ethBalanceData } = useBalance({
         address: connectedAccount,
     });
 
-    // Get contract info for all pools and tokens
-    const { data: ETHTokenAPoolInfo } = useDeployedContractInfo({ contractName: "ETHTokenAPool" });
-    const { data: ETHTokenBPoolInfo } = useDeployedContractInfo({ contractName: "ETHTokenBPool" });
+    // Get contract info for pools and tokens based on environment
     const { data: TokenATokenBPoolInfo } = useDeployedContractInfo({ contractName: "TokenATokenBPool" });
     const { data: TokenAInfo } = useDeployedContractInfo({ contractName: "TokenA" });
     const { data: TokenBInfo } = useDeployedContractInfo({ contractName: "TokenB" });
+
+    // Only fetch ETH pool info if in local environment
+    const { data: ETHTokenAPoolInfo } = IF_LOCAL 
+        ? useDeployedContractInfo({ contractName: "ETHTokenAPool" })
+        : { data: undefined };
+    const { data: ETHTokenBPoolInfo } = IF_LOCAL
+        ? useDeployedContractInfo({ contractName: "ETHTokenBPool" })
+        : { data: undefined };
 
     // Read user token balances
     const { data: userTokenABalance } = useScaffoldReadContract({
@@ -36,42 +42,47 @@ const PoolsPage = () => {
     });
 
     // Read user liquidity positions
-    const { data: userETHTokenALiquidity } = useScaffoldReadContract({
-        contractName: "ETHTokenAPool",
-        functionName: "getLiquidity",
-        args: [connectedAccount],
-    });
-
-    const { data: userETHTokenBLiquidity } = useScaffoldReadContract({
-        contractName: "ETHTokenBPool",
-        functionName: "getLiquidity",
-        args: [connectedAccount],
-    });
-
     const { data: userTokenATokenBLiquidity } = useScaffoldReadContract({
         contractName: "TokenATokenBPool",
         functionName: "getLiquidity",
         args: [connectedAccount],
     });
 
+    // Only fetch ETH pool liquidity if in local environment
+    const ethTokenALiquidity = IF_LOCAL ? useScaffoldReadContract({
+        contractName: "ETHTokenAPool",
+        functionName: "getLiquidity",
+        args: [connectedAccount],
+    }) : { data: 0n };
+
+    const ethTokenBLiquidity = IF_LOCAL ? useScaffoldReadContract({
+        contractName: "ETHTokenBPool",
+        functionName: "getLiquidity",
+        args: [connectedAccount],
+    }) : { data: 0n };
+
     useEffect(() => {
         if (
-            ethBalanceData && // Added ETH balance check
-            ETHTokenAPoolInfo &&
-            ETHTokenBPoolInfo &&
+            ethBalanceData &&
             TokenATokenBPoolInfo &&
             TokenAInfo &&
             TokenBInfo &&
             userTokenABalance !== undefined &&
             userTokenBBalance !== undefined &&
-            userETHTokenALiquidity !== undefined &&
-            userETHTokenBLiquidity !== undefined &&
-            userTokenATokenBLiquidity !== undefined
+            userTokenATokenBLiquidity !== undefined &&
+            // Only check ETH pool data if in local environment
+            (!IF_LOCAL || (
+                ETHTokenAPoolInfo &&
+                ETHTokenBPoolInfo &&
+                ethTokenALiquidity.data !== undefined &&
+                ethTokenBLiquidity.data !== undefined
+            ))
         ) {
             setIsLoading(false);
         }
     }, [
-        ethBalanceData, // Added to dependency array
+        IF_LOCAL,
+        ethBalanceData,
         ETHTokenAPoolInfo,
         ETHTokenBPoolInfo,
         TokenATokenBPoolInfo,
@@ -79,8 +90,8 @@ const PoolsPage = () => {
         TokenBInfo,
         userTokenABalance,
         userTokenBBalance,
-        userETHTokenALiquidity,
-        userETHTokenBLiquidity,
+        ethTokenALiquidity.data,
+        ethTokenBLiquidity.data,
         userTokenATokenBLiquidity
     ]);
 
@@ -122,25 +133,29 @@ const PoolsPage = () => {
             </div>
 
             <div className="space-y-8">
-                <Pool
-                    poolName="ETHTokenAPool"
-                    poolType="eth-token"
-                    poolAddress={ETHTokenAPoolInfo?.address || ""}
-                    tokenAName="TokenA"
-                    tokenAAddress={TokenAInfo?.address || ""}
-                    userTokenABalance={userTokenABalance || 0n}
-                    userLiquidity={userETHTokenALiquidity || 0n}
-                />
+                {IF_LOCAL && (
+                    <>
+                        <Pool
+                            poolName="ETHTokenAPool"
+                            poolType="eth-token"
+                            poolAddress={ETHTokenAPoolInfo?.address || ""}
+                            tokenAName="TokenA"
+                            tokenAAddress={TokenAInfo?.address || ""}
+                            userTokenABalance={userTokenABalance || 0n}
+                            userLiquidity={ethTokenALiquidity.data || 0n}
+                        />
 
-                <Pool
-                    poolName="ETHTokenBPool"
-                    poolType="eth-token"
-                    poolAddress={ETHTokenBPoolInfo?.address || ""}
-                    tokenAName="TokenB"
-                    tokenAAddress={TokenBInfo?.address || ""}
-                    userTokenABalance={userTokenBBalance || 0n}
-                    userLiquidity={userETHTokenBLiquidity || 0n}
-                />
+                        <Pool
+                            poolName="ETHTokenBPool"
+                            poolType="eth-token"
+                            poolAddress={ETHTokenBPoolInfo?.address || ""}
+                            tokenAName="TokenB"
+                            tokenAAddress={TokenBInfo?.address || ""}
+                            userTokenABalance={userTokenBBalance || 0n}
+                            userLiquidity={ethTokenBLiquidity.data || 0n}
+                        />
+                    </>
+                )}
 
                 <Pool
                     poolName="TokenATokenBPool"
