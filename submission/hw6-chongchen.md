@@ -50,4 +50,4 @@ All source code is available on GitHub:
 
 ## Video Demo
 A video demo of the application's functionality is available on YouTube:
-[https://youtu.be/v9208-73_5Q](https://youtu.be/v9208-73_5Q)
+[https://youtu.be/6EZNUZK5jOg](https://youtu.be/6EZNUZK5jOg)
