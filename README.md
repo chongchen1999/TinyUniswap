@@ -1,100 +1,116 @@
-# Uniswap Web3 UI  
+# TinyUniswap
 
-## 📌 **Project Overview**  
-This project is a Web3 user interface (UI) for the upgraded Uniswap smart contracts built in Homework 5. The UI enables users to interact with Uniswap liquidity pools directly from the browser. The goal is to provide a seamless experience for selecting pools, managing liquidity, and visualizing market data.  
+A web3 user interface for interacting with Uniswap-style smart contracts, allowing users to manage liquidity pools and perform token operations through an intuitive interface.
 
-## 🚀 **Features**  
-### ✅ **Core Functionality**  
-- **Pool Selection:**  
-   - Browse and select available liquidity pools.  
+## 🌟 Features
 
-- **Deposit, Redeem, and Swap:**  
-   - Deposit tokens into a pool to provide liquidity.  
-   - Redeem liquidity tokens to withdraw assets.  
-   - Swap tokens within the pool at market rates.  
+- **Pool Management**: Select and interact with different liquidity pools
+- **Token Operations**: Deposit, redeem, and swap tokens with real-time pricing
+- **Visual Analytics**: 
+  - Real-time reserves curve visualization
+  - Historical swap execution price charts
+- **Smart Contract Integration**: Fully deployed and verified on Sepolia testnet
+- **Responsive Design**: Works across desktop and mobile devices
 
-### 📊 **Visualizations**  
-- **Reserves Curve:**  
-   - A dynamic chart showing the real-time reserves of each pool.  
-   - Updated automatically with every pool action.  
+## 📋 Prerequisites
 
-- **Execution Price Distribution:**  
-   - A histogram or line chart displaying the distribution of execution prices for past swaps.  
-   - Updated in real-time with new swap data.  
+- Node.js (v16+)
+- Yarn package manager
+- MetaMask or similar Web3 wallet
 
-## 🛠️ **Tech Stack**  
-### **Smart Contracts**  
-- **Solidity:** Upgraded UniswapV2 smart contracts.  
-- **Foundry:** Used for contract development and testing.  
-- **Public Testnet:** Contracts deployed on a public Ethereum testnet (e.g., Goerli).  
+## 🚀 Quick Start
 
-### **Frontend**  
-- **Framework:** [Scaffold-ETH](https://github.com/scaffold-eth/scaffold-eth)  
-- **React:** UI components and state management.  
-- **Ethers.js:** Web3 library for contract interactions.  
-- **Chart.js / Recharts:** For building interactive charts.  
+Clone the repository and install dependencies:
 
-### **Deployment**  
-- **Smart Contracts:** Deployed on a public Ethereum testnet.  
-- **UI:** Hosted on [Vercel](https://vercel.com).  
-
-## 🏗️ **Setup & Installation**  
-### 1. **Clone the Repository**  
 ```bash
-git clone https://github.com/your-username/uniswap-web3-ui.git
-cd uniswap-web3-ui
+git clone https://github.com/chongchen1999/TinyUniswap.git
+cd TinyUniswap
+yarn install
 ```
 
-### 2. **Install Dependencies**  
+### Local Development
+
+Run a local blockchain:
 ```bash
-npm install
+yarn chain
 ```
 
-### 3. **Set Up Environment Variables**  
-Create a `.env` file in the project root and add the following:  
-```env
-NEXT_PUBLIC_RPC_URL=<YOUR_TESTNET_RPC_URL>
-NEXT_PUBLIC_CONTRACT_ADDRESS=<DEPLOYED_CONTRACT_ADDRESS>
-NEXT_PUBLIC_WALLET_PRIVATE_KEY=<YOUR_PRIVATE_KEY>
-```
-
-### 4. **Run the Project**  
+Deploy the contracts:
 ```bash
-npm run dev
+yarn deploy --reset
 ```
 
-### 5. **Deploy the Smart Contracts**  
-Using Foundry:  
+Start the frontend application:
 ```bash
-forge script deploy.s.sol --rpc-url <RPC_URL> --private-key <PRIVATE_KEY> --broadcast
+yarn start
 ```
 
-### 6. **Deploy the UI to Vercel**  
+Visit `http://localhost:3000` in your browser to use the application.
+
+## 🔄 Smart Contracts
+
+All contracts are deployed and verified on the Sepolia testnet:
+
+| Contract | Address |
+|----------|---------|
+| TokenA | `0xB667f5e8171468F12F47eF7E03C76F5594F33248` |
+| TokenB | `0xC215279133800AFca77eF50C6651db656831138e` |
+| TokenATokenBPool | `0x117F180f4bB2235c075b4a3FB5Dc5ff72d74A739` |
+
+### Verification
+
+Contracts were verified using:
 ```bash
-vercel --prod
+yarn verify --network sepolia
 ```
 
-## 🎯 **Usage**  
-1. Connect your wallet using MetaMask.  
-2. Select a pool from the list of available pools.  
-3. Deposit liquidity, redeem assets, or swap tokens.  
-4. Monitor pool performance using real-time charts.  
+## 🌐 Live Demo
 
-## ✅ **Best Practices**  
-- Follow the ERC-20 standard for token compatibility.  
-- Ensure slippage protection during swaps.  
-- Use try-catch blocks for smart contract calls.  
+The application is deployed and accessible at:
+[https://tiny-uniswap-9ohnriq03-chong-chens-projects.vercel.app/](https://tiny-uniswap-9ohnriq03-chong-chens-projects.vercel.app/)
 
-## 📝 **Future Improvements**  
-- Add historical data for deeper analysis.  
-- Improve chart interactivity.  
-- Optimize gas fees for contract interactions.  
+## 📹 Video Walkthrough
 
-## 🏆 **Contributors**  
-- **[Your Name]** – Smart Contracts, UI Development, Charting  
+Watch a demonstration of the application's functionality:
+[https://youtu.be/6EZNUZK5jOg](https://youtu.be/6EZNUZK5jOg)
 
----
+## 📁 Project Structure
 
-✅ **Live Demo:** [https://uniswap-web3-ui.vercel.app](https://uniswap-web3-ui.vercel.app)  
-✅ **Smart Contract Address:** `<DEPLOYED_CONTRACT_ADDRESS>`  
-✅ **License:** MIT  
+```
+TinyUniswap/
+├── contracts/         # Smart contract Solidity files
+├── deploy/            # Deployment scripts
+├── public/            # Static assets
+├── src/
+│   ├── components/    # React UI components
+│   ├── hooks/         # Custom React hooks for web3 interaction
+│   ├── pages/         # Page components and routing
+│   └── services/      # Services for contract interaction
+├── hardhat.config.js  # Hardhat configuration
+└── package.json       # Project dependencies
+```
+
+## 🛠️ Technologies Used
+
+- **Frontend**: React.js, ethers.js, Web3Modal
+- **Smart Contracts**: Solidity, Hardhat
+- **Deployment**: Vercel, Sepolia testnet
+- **Visualization**: D3.js, Chart.js
+
+## 🧪 Testing
+
+Run the test suite:
+```bash
+yarn test
+```
+
+Run contract tests specifically:
+```bash
+yarn test:contracts
+```
+
+## 📧 Contact
+
+Chong Chen - [GitHub Profile](https://github.com/chongchen1999)
+
+Project Link: [https://github.com/chongchen1999/TinyUniswap](https://github.com/chongchen1999/TinyUniswap)
